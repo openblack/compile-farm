@@ -1,0 +1,51 @@
+trigger:
+- master
+# Only run this pipeline on a Pull Request if this file is modified; the rest
+# is all for azure-pipelines-linux to handle.
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - azure-pipelines-windows.yml
+
+jobs:
+- job: WindowsDependencies
+  displayName: 'Windows Dependencies'
+  pool:
+    vmImage: 'windows-2019'
+
+  steps:
+  - script: |
+      cd /d c:\vcpkg
+      git pull
+      .\bootstrap-vcpkg.bat
+    displayName: 'Update vcpkg'
+  - script: vcpkg.exe install sdl2:x64-windows spdlog:x64-windows entt:x64-windows glm:x64-windows spirv-cross:x64-windows spirv-tools:x64-windows cxxopts:x64-windows
+    displayName: 'Install x64 dependencies'
+  - bash: |
+      set -ex
+
+      rm -rf /c/vcpkg/.git*
+      rm -rf /c/vcpkg/buildtrees
+      rm -rf /c/vcpkg/docs
+      rm -rf /c/vcpkg/downloads
+      rm -rf /c/vcpkg/packages
+      rm -rf /c/vcpkg/ports
+      rm -rf /c/vcpkg/toolsrc
+      mv /c/vcpkg windows-dependencies
+    displayName: 'Remove unused files'
+  - task: ArchiveFiles@2
+    displayName: Archive
+    inputs:
+      rootFolderOrFile: 'windows-dependencies'
+      archiveFile: 'windows-dependencies.zip'
+
+  # Only publish when it triggered on 'master' (and not on a Pull Request)
+  - task: PublishBuildArtifacts@1
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    displayName: Publish
+    inputs:
+      PathtoPublish: windows-dependencies.zip
+      ArtifactName: 'windows-dependencies'
