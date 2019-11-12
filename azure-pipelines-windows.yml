@@ -22,7 +22,7 @@ jobs:
       git pull
       .\bootstrap-vcpkg.bat
     displayName: 'Update vcpkg'
-  - script: vcpkg.exe install sdl2:x64-windows spdlog:x64-windows entt:x64-windows glm:x64-windows spirv-cross:x64-windows spirv-tools:x64-windows cxxopts:x64-windows
+  - script: vcpkg.exe install sdl2:x64-windows spdlog:x64-windows entt:x64-windows glm:x64-windows spirv-cross:x64-windows spirv-tools:x64-windows bullet3:x64-windows cxxopts:x64-windows
     displayName: 'Install x64 dependencies'
   - bash: |
       set -ex
