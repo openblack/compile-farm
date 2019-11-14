@@ -23,8 +23,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
     libbullet-dev \
     libsdl2-dev \
     ninja-build \
-    spirv-headers \
-    spirv-tools \
     tar \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
