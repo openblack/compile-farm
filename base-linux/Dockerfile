@@ -19,6 +19,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
     build-essential \
     bzip2 \
     ca-certificates \
+    curl \
     git \
     libbullet-dev \
     libsdl2-dev \
