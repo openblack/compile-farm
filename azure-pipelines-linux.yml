@@ -1,0 +1,78 @@
+trigger:
+- master
+# Only run this pipeline on a Pull Request if anything but the
+# azure-pipeline-windows is modified; otherwise that pipeline can
+# handle it just fine.
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - azure-pipelines-windows.yml
+
+jobs:
+- job: BaseImages
+  displayName: 'Base image'
+  pool:
+    vmImage: 'ubuntu-18.04'
+
+  strategy:
+    matrix:
+      linux-debian-stretch-i386:
+        Distro: i386/debian
+        Release: stretch-slim
+        Tag: linux-debian-stretch-i386
+      linux-debian-stretch-amd64:
+        Distro: debian
+        Release: stretch-slim
+        Tag: linux-debian-stretch-amd64
+      linux-debian-buster-i386:
+        Distro: i386/debian
+        Release: buster-slim
+        Tag: linux-debian-buster-i386
+      linux-debian-buster-amd64:
+        Distro: debian
+        Release: buster-slim
+        Tag: linux-debian-buster-amd64
+      linux-ubuntu-xenial-i386:
+        Distro: i386/ubuntu
+        Release: xenial
+        Tag: linux-ubuntu-xenial-i386
+      linux-ubuntu-xenial-amd64:
+        Distro: ubuntu
+        Release: xenial
+        Tag: linux-ubuntu-xenial-amd64
+      linux-ubuntu-bionic-i386:
+        Distro: i386/ubuntu
+        Release: bionic
+        Tag: linux-ubuntu-bionic-i386
+      linux-ubuntu-bionic-amd64:
+        Distro: ubuntu
+        Release: bionic
+        Tag: linux-ubuntu-bionic-amd64
+
+  steps:
+  - checkout: self
+    submodules: true
+  - task: Docker@1
+    displayName: 'Build base image'
+    inputs:
+      dockerFile: base-linux/Dockerfile
+      arguments: '--build-arg DISTRO=$(Distro) --build-arg RELEASE=$(Release)'
+      imageName: 'openblack/base:$(Tag)'
+      addDefaultLabels: false
+
+  # Publish the images via artifacts
+  # Explicitly we do not publish them via Docker Hub as that would mean the CI
+  # updates production images, which is a bad idea.
+  - script: |
+      set -ex
+      mkdir base-images
+      docker save openblack/base:$(Tag) | gzip -c > base-$(Tag).tar.gz
+    displayName: 'Save base image'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish base image'
+    inputs:
+      PathtoPublish: base-$(Tag).tar.gz
+      ArtifactName: base-images
