@@ -1,16 +1,4 @@
-ARG DISTRO=debian
-ARG RELEASE=stretch-slim
-FROM ${DISTRO}:${RELEASE}
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-LABEL \
-    maintainer="info@openblack.dev" \
-    org.label-schema.description="openblack base images" \
-    org.label-schema.schema-version="1.0" \
-    org.label-schema.url="https://openblack.dev/" \
-    org.label-schema.vcs-url="https://github.com/openblack/compile-farm" \
-    org.label-schema.vendor=openblack
+FROM amd64/ubuntu:rolling
 
 # Dependencies needed to compile openblack
 RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
@@ -23,10 +11,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
     git \
     libbullet-dev \
     libsdl2-dev \
-    ninja-build \
-    tar \
-    xz-utils \
-    && rm -rf /var/lib/apt/lists/*
+    ninja-build
 
 # Install cmake 3.15.4
 RUN curl -s "https://cmake.org/files/v3.15/cmake-3.15.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
@@ -45,3 +30,6 @@ RUN mkdir /tools \
     && cd vcpkg \
     && ./bootstrap-vcpkg.sh --useSystemBinaries \
     && VCPKG_FORCE_SYSTEM_BINARIES=1 ./vcpkg install cxxopts entt glm spdlog spirv-cross spirv-tools
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app

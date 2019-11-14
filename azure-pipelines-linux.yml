@@ -11,68 +11,34 @@ pr:
     exclude:
     - azure-pipelines-windows.yml
 
-jobs:
-- job: BaseImages
-  displayName: 'Base image'
+- job: LinuxCI
+  displayName: 'Linux CI image'
   pool:
     vmImage: 'ubuntu-18.04'
 
   strategy:
     matrix:
-      linux-debian-stretch-i386:
-        Distro: i386/debian
-        Release: stretch-slim
-        Tag: linux-debian-stretch-i386
-      linux-debian-stretch-amd64:
-        Distro: debian
-        Release: stretch-slim
-        Tag: linux-debian-stretch-amd64
-      linux-debian-buster-i386:
-        Distro: i386/debian
-        Release: buster-slim
-        Tag: linux-debian-buster-i386
-      linux-debian-buster-amd64:
-        Distro: debian
-        Release: buster-slim
-        Tag: linux-debian-buster-amd64
-      linux-ubuntu-xenial-i386:
-        Distro: i386/ubuntu
-        Release: xenial
-        Tag: linux-ubuntu-xenial-i386
-      linux-ubuntu-xenial-amd64:
-        Distro: ubuntu
-        Release: xenial
-        Tag: linux-ubuntu-xenial-amd64
-      linux-ubuntu-bionic-i386:
-        Distro: i386/ubuntu
-        Release: bionic
-        Tag: linux-ubuntu-bionic-i386
-      linux-ubuntu-bionic-amd64:
-        Distro: ubuntu
-        Release: bionic
-        Tag: linux-ubuntu-bionic-amd64
+      linux-amd64-gcc-9:
+        Folder: ci-linux-amd64-gcc
+        Tag: linux-amd64-gcc
 
   steps:
   - checkout: self
     submodules: true
+
   - task: Docker@1
-    displayName: 'Build base image'
+    displayName: 'Build image'
     inputs:
-      dockerFile: base-linux/Dockerfile
-      arguments: '--build-arg DISTRO=$(Distro) --build-arg RELEASE=$(Release)'
-      imageName: 'openblack/base:$(Tag)'
+      dockerFile: $(Folder)/Dockerfile
+      imageName: 'openblack/compile-farm-ci:$(Tag)'
       addDefaultLabels: false
 
-  # Publish the images via artifacts
-  # Explicitly we do not publish them via Docker Hub as that would mean the CI
-  # updates production images, which is a bad idea.
-  - script: |
-      set -ex
-      mkdir base-images
-      docker save openblack/base:$(Tag) | gzip -c > base-$(Tag).tar.gz
-    displayName: 'Save base image'
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish base image'
+  # Only publish when it triggered on 'master' (and not on a Pull Request)
+  - task: Docker@1
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    displayName: 'Publish image'
     inputs:
-      PathtoPublish: base-$(Tag).tar.gz
-      ArtifactName: base-images
+      containerregistrytype: 'Container Registry'
+      dockerRegistryEndpoint: 'openblack Docker Hub'
+      command: 'Push an image'
+      imageName: 'openblack/compile-farm-ci:$(Tag)'
