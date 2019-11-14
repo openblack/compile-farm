@@ -11,6 +11,7 @@ pr:
     exclude:
     - azure-pipelines-windows.yml
 
+jobs:
 - job: LinuxCI
   displayName: 'Linux CI image'
   pool:
