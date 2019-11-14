@@ -40,12 +40,13 @@ jobs:
     displayName: Archive
     inputs:
       rootFolderOrFile: 'windows-dependencies'
-      archiveFile: 'windows-dependencies.zip'
+      archiveType: '7z'
+      archiveFile: 'windows-dependencies.7z'
 
   # Only publish when it triggered on 'master' (and not on a Pull Request)
   - task: PublishBuildArtifacts@1
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: Publish
     inputs:
-      PathtoPublish: windows-dependencies.zip
+      PathtoPublish: windows-dependencies.7z
       ArtifactName: 'windows-dependencies'
