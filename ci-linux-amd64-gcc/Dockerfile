@@ -29,7 +29,7 @@ RUN mkdir /tools \
     && git clone https://github.com/Microsoft/vcpkg.git --depth 1 \ 
     && cd vcpkg \
     && ./bootstrap-vcpkg.sh --useSystemBinaries \
-    && VCPKG_FORCE_SYSTEM_BINARIES=1 ./vcpkg install cxxopts entt glm spdlog spirv-cross spirv-tools
+    && VCPKG_FORCE_SYSTEM_BINARIES=1 ./vcpkg install assimp cxxopts entt glm spdlog spirv-cross spirv-tools
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

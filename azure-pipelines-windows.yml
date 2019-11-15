@@ -27,7 +27,7 @@ jobs:
       git pull
       .\bootstrap-vcpkg.bat
     displayName: 'Update vcpkg'
-  - script: vcpkg.exe install sdl2:$(TargetTriplet) spdlog:$(TargetTriplet) entt:$(TargetTriplet) glm:$(TargetTriplet) bullet3:$(TargetTriplet) cxxopts:$(TargetTriplet)
+  - script: vcpkg.exe install assimp:$(TargetTriplet) sdl2:$(TargetTriplet) spdlog:$(TargetTriplet) entt:$(TargetTriplet) glm:$(TargetTriplet) bullet3:$(TargetTriplet) cxxopts:$(TargetTriplet)
     displayName: 'Install dependencies'
   - bash: |
       set -ex
