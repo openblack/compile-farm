@@ -16,14 +16,23 @@ jobs:
   pool:
     vmImage: 'windows-2019'
 
+  strategy:
+    matrix:
+      Win32:
+        TargetArch: 'x86'
+        TargetTriplet: 'x86-windows'
+      Win64:
+        TargetArch: 'x64'
+        TargetTriplet: 'x64-windows'
+
   steps:
   - script: |
       cd /d c:\vcpkg
       git pull
       .\bootstrap-vcpkg.bat
     displayName: 'Update vcpkg'
-  - script: vcpkg.exe install sdl2:x64-windows spdlog:x64-windows entt:x64-windows glm:x64-windows spirv-cross:x64-windows spirv-tools:x64-windows bullet3:x64-windows cxxopts:x64-windows
-    displayName: 'Install x64 dependencies'
+  - script: vcpkg.exe install sdl2:$(TargetTriplet) spdlog:$(TargetTriplet) entt:$(TargetTriplet) glm:$(TargetTriplet) spirv-cross:$(TargetTriplet) spirv-tools:$(TargetTriplet) bullet3:$(TargetTriplet) cxxopts:$(TargetTriplet)
+    displayName: 'Install dependencies'
   - bash: |
       set -ex
 
@@ -41,12 +50,12 @@ jobs:
     inputs:
       rootFolderOrFile: 'windows-dependencies'
       archiveType: '7z'
-      archiveFile: 'windows-dependencies.7z'
+      archiveFile: 'windows-dependencies-$(TargetArch).7z'
 
   # Only publish when it triggered on 'master' (and not on a Pull Request)
   - task: PublishBuildArtifacts@1
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: Publish
     inputs:
-      PathtoPublish: windows-dependencies.7z
-      ArtifactName: 'windows-dependencies'
+      PathtoPublish: windows-dependencies-$(TargetArch).7z
+      ArtifactName: 'windows-dependencies-$(TargetArch)'
