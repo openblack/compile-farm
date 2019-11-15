@@ -1,9 +1,4 @@
 trigger:
-- master
-# Only run this pipeline on a Pull Request if anything but the
-# azure-pipeline-windows is modified; otherwise that pipeline can
-# handle it just fine.
-pr:
   branches:
     include:
     - master
