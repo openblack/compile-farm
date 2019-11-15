@@ -1,8 +1,4 @@
 trigger:
-- master
-# Only run this pipeline on a Pull Request if this file is modified; the rest
-# is all for azure-pipelines-linux to handle.
-pr:
   branches:
     include:
     - master
