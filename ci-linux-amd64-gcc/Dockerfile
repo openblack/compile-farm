@@ -31,5 +31,14 @@ RUN mkdir /tools \
     && ./bootstrap-vcpkg.sh --useSystemBinaries \
     && VCPKG_FORCE_SYSTEM_BINARIES=1 ./vcpkg install cxxopts entt glm spdlog
 
+# build bgfx (release only for now..)
+WORKDIR /bgfx
+RUN git -c http.sslVerify=false clone --depth 1 --recursive --shallow-submodules -b master https://github.com/openblack/bgfx.cmake . \
+ && mkdir build \
+ && cd build \
+ && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/bgfx-install \
+ && ninja install \
+ && rm -rf /bgfx
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
