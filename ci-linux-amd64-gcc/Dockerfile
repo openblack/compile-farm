@@ -10,6 +10,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
     curl \
     git \
     libbullet-dev \
+    libbullet-extras-dev \
     libsdl2-dev \
     ninja-build
 
