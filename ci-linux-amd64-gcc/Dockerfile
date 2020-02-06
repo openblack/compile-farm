@@ -18,7 +18,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
 RUN curl -s "https://cmake.org/files/v3.15/cmake-3.15.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
 
 # Install clang-format
-RUN curl -s 'https://github.com/angular/clang-format/blob/master/bin/linux_x64/clang-format?raw=true' -o '/usr/local/bin/clang-format' \
+RUN curl -s 'https://github.com/angular/clang-format/blob/master/bin/linux_x64/clang-format?raw=true' -L -o '/usr/local/bin/clang-format' \
     && chmod +x /usr/local/bin/clang-format
 
 # Install vcpkg (https://github.com/Microsoft/vcpkg.git) to compile the dependencies that do not have Ubuntu packages.
