@@ -1,5 +1,7 @@
 FROM amd64/ubuntu:rolling
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 # Dependencies needed to compile openblack
 RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
     apt-get install -y --no-install-recommends \
