@@ -14,7 +14,14 @@ RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && \
     libbullet-dev \
     libbullet-extras-dev \
     libsdl2-dev \
-    ninja-build
+    ninja-build \
+	ffmpeg \
+	libavcodec-dev \
+	libavformat-dev \
+	libavutil-dev \
+	libswresample-dev \
+	libopenal-dev \
+	libopenal1
 
 # Install cmake 3.15.4
 RUN curl -s "https://cmake.org/files/v3.15/cmake-3.15.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
